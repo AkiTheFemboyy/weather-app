@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ text.title }}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        body {
+            font-family: sans-serif;
+            text-align: center;
+            background: #121212;
+            color: white;
+            padding: 20px;
+        }
+
+        input, button {
+            padding: 12px;
+            margin: 8px;
+            width: 80%;
+            border-radius: 10px;
+            border: none;
+        }
+
+        button {
+            background: #ff69b4;
+            color: white;
+            font-weight: bold;
+        }
+
+        .card {
+            margin-top: 20px;
+            padding: 15px;
+            background: #1e1e1e;
+            border-radius: 12px;
+            white-space: pre-line;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>{{ text.title }}</h1>
+
+    <form method="POST">
+        <input name="city" placeholder="Enter city">
+        <br>
+        <button type="submit">{{ text.search }}</button>
+        <button name="gps" value="1">{{ text.gps }}</button>
+        <br><br>
+        <button name="lang" value="{{ 'cz' if lang == 'en' else 'en' }}">
+            EN / CZ
+        </button>
+    </form>
+
+    <div class="card">{{ result }}</div>
+
+</body>
+</html>
