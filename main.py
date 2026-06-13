@@ -31,6 +31,17 @@ TEXT = {
     }
 }
 
+WEATHER_CZ = {
+    "clear sky": "jasno",
+    "few clouds": "polojasno",
+    "scattered clouds": "rozptýlená oblačnost",
+    "broken clouds": "zataženo",
+    "shower rain": "přeháňky",
+    "rain": "déšť",
+    "thunderstorm": "bouřka",
+    "snow": "sníh",
+    "mist": "mlha"
+}
 
 def get_location():
     try:
@@ -51,11 +62,19 @@ def get_weather(lat, lon, city_name, lang):
     if str(data.get("cod")) != "200":
         return TEXT[lang]["notfound"]
 
+    weather_en = data["weather"][0]["description"]
+    weather_cz = WEATHER_CZ.get(weather_en.lower(), weather_en)
+    weather_final = weather_cz if lang == "cz" else weather_en 
+    
     temp = data["main"]["temp"]
     feels = data["main"]["feels_like"]
     humidity = data["main"]["humidity"]
     wind = data["wind"]["speed"]
-    weather = data["weather"][0]["description"]
+    weather_en = data["weather"][0]["description"]
+
+    weather_cz = WEATHER_CZ.get(weather_en.lower(), weather_en)
+
+    weather = weather_cz if lang == "cz" else weather_en
 
     icon = ""
     if "clear" in weather:
@@ -67,7 +86,19 @@ def get_weather(lat, lon, city_name, lang):
     elif "snow" in weather:
         icon = "❄️"
 
-    return f"""
+def format_weather(temp, feels, humidity, wind, weather, icon, city_name, lang):
+    if lang == "cz":
+        return f"""
+{icon} {weather.capitalize()}
+
+📍 {city_name}
+🌡️ Teplota: {temp}°C
+🤔 Pocitová teplota: {feels}°C
+💧 Vlhkost: {humidity}%
+💨 Rychlost větru: {wind} m/s
+"""
+    else:
+        return f"""
 {icon} {weather.capitalize()}
 
 📍 {city_name}
