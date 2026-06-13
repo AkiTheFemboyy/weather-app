@@ -113,7 +113,7 @@ def home():
 
     if request.method == "POST":
 
-        if "city" in request.form:
+        if "city_btn" in request.form:
             city = request.form["city"].strip()
 
             if not city:
@@ -129,7 +129,7 @@ def home():
                     lon = data[0]["lon"]
                     result = get_weather(lat, lon, city, lang)
 
-        elif "gps" in request.form:
+        elif "gps_btn" in request.form:
             loc, city = get_location()
 
             if not loc:
