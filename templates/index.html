@@ -41,6 +41,10 @@
     <h1>{{ text.title }}</h1>
 
     <form method="POST">
+        <select name="lang">
+        <option value="en">English</option>
+        <option value="cz">Čeština</option>
+        </select>
         <input name="city" placeholder="Enter city">
         <br>
         <button type="submit">{{ text.search }}</button>
