@@ -38,24 +38,36 @@
 </head>
 <body>
 
-    <h1>{{ text.title }}</h1>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ text["title"] }}</title>
+</head>
 
-    <form method="POST">
-        <select name="lang">
-        <option value="en">English</option>
-        <option value="cz">Čeština</option>
-        </select>
-        <input name="city" placeholder="Enter city">
-        <br>
-        <button type="submit">{{ text.search }}</button>
-        <button name="gps" value="1">{{ text.gps }}</button>
-        <br><br>
-        <button name="lang" value="{{ 'cz' if lang == 'en' else 'en' }}">
-            EN / CZ
-        </button>
-    </form>
+<body>
 
-    <div class="card">{{ result }}</div>
+<h1>{{ text["title"] }}</h1>
+
+<form method="POST">
+
+    <input type="text" name="city" placeholder="{{ text['search'] }}">
+
+    <button type="submit" name="city_btn">
+        {{ text["search"] }}
+    </button>
+
+    <button type="submit" name="gps_btn" value="1">
+        {{ text["gps"] }}
+    </button>
+
+    <select name="lang">
+        <option value="en" {% if lang == "en" %}selected{% endif %}>English</option>
+        <option value="cz" {% if lang == "cz" %}selected{% endif %}>Čeština</option>
+    </select>
+
+</form>
+
+<pre>{{ result }}</pre>
 
 </body>
 </html>
