@@ -8,8 +8,6 @@ app = Flask(__name__)
 
 API_KEY = "0001011a7c9772a5ca2c46428326d81b"
 
-LANG = "en"
-
 TEXT = {
     "en": {
         "title": "Weather",
@@ -43,6 +41,7 @@ WEATHER_CZ = {
     "mist": "mlha"
 }
 
+
 def get_location():
     try:
         g = geocoder.ip("me")
@@ -50,41 +49,6 @@ def get_location():
     except:
         return None, None
 
-
-def get_weather(lat, lon, city_name, lang):
-    url = f"https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={API_KEY}&units=metric&lang={lang}"
-
-    try:
-        data = requests.get(url).json()
-    except:
-        return TEXT[lang]["net"]
-
-    if str(data.get("cod")) != "200":
-        return TEXT[lang]["notfound"]
-
-    weather_en = data["weather"][0]["description"]
-    weather_cz = WEATHER_CZ.get(weather_en.lower(), weather_en)
-    weather_final = weather_cz if lang == "cz" else weather_en 
-    
-    temp = data["main"]["temp"]
-    feels = data["main"]["feels_like"]
-    humidity = data["main"]["humidity"]
-    wind = data["wind"]["speed"]
-    weather_en = data["weather"][0]["description"]
-
-    weather_cz = WEATHER_CZ.get(weather_en.lower(), weather_en)
-
-    weather = weather_cz if lang == "cz" else weather_en
-
-    icon = ""
-    if "clear" in weather:
-        icon = "☀️"
-    elif "cloud" in weather:
-        icon = "☁️"
-    elif "rain" in weather:
-        icon = "🌧️"
-    elif "snow" in weather:
-        icon = "❄️"
 
 def format_weather(temp, feels, humidity, wind, weather, icon, city_name, lang):
     if lang == "cz":
@@ -107,6 +71,39 @@ def format_weather(temp, feels, humidity, wind, weather, icon, city_name, lang):
 💧 Humidity: {humidity}%
 💨 Wind: {wind} m/s
 """
+
+
+def get_weather(lat, lon, city_name, lang):
+    url = f"https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={API_KEY}&units=metric&lang={lang}"
+
+    try:
+        data = requests.get(url).json()
+    except:
+        return TEXT[lang]["net"]
+
+    if str(data.get("cod")) != "200":
+        return TEXT[lang]["notfound"]
+
+    temp = data["main"]["temp"]
+    feels = data["main"]["feels_like"]
+    humidity = data["main"]["humidity"]
+    wind = data["wind"]["speed"]
+
+    weather_en = data["weather"][0]["description"]
+    weather_cz = WEATHER_CZ.get(weather_en.lower(), weather_en)
+    weather = weather_cz if lang == "cz" else weather_en
+
+    icon = ""
+    if "clear" in weather_en:
+        icon = "☀️"
+    elif "cloud" in weather_en:
+        icon = "☁️"
+    elif "rain" in weather_en:
+        icon = "🌧️"
+    elif "snow" in weather_en:
+        icon = "❄️"
+
+    return format_weather(temp, feels, humidity, wind, weather, icon, city_name, lang)
 
 
 @app.route("/", methods=["GET", "POST"])
@@ -142,6 +139,7 @@ def home():
                 result = get_weather(lat, lon, city or "My Location", lang)
 
     return render_template("index.html", result=result, lang=lang, text=TEXT[lang])
+
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8000))
